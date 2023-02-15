@@ -20,6 +20,7 @@ class CrashCommand:
     def __init__(self) -> None:
         self._program:str = ''
         self._arguments:List[str] = []
+        self.timeout:int = 0
     
     
     def run(self) -> bool:
@@ -29,11 +30,19 @@ class CrashCommand:
         
         run_command:List[str] = [self.command]
         run_command += self.arguments
+        
         try:
-            subprocess.run(run_command, check=True)
+            if self.timeout:
+                subprocess.run(run_command, timeout=self.timeout, check=True)
+            else:
+                subprocess.run(run_command, check=True)
             return True
+        
         except subprocess.CalledProcessError:
             return False
+        
+        except subprocess.TimeoutExpired:
+            return True
 
     @property
     def command(self) -> str:
