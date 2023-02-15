@@ -15,15 +15,18 @@ Result = Dict[int, bool]
 Analysis = Tuple[int, int, int]
 
 def runner(command:CrashCommand ,iterations:int) -> Result:
+    print(f'Starting {iterations} iterations of program {command.program}...')
     results:Result = {}
-    count:int = 0
+    count:int = 1
 
-    while count >= iterations:
+    while count <= iterations:
+        print(f'Starting run #{count} of {iterations}...')
         if command.run():
             results[count] = True
         else:
             results[count] = False
         count += 1
+        print(f'Run #{count} complete!')
 
     return results
 
@@ -43,7 +46,10 @@ def analyze(results:Result) -> Analysis:
 
 def output(command:CrashCommand, analysis:Analysis) -> str:
     success, fails, total = analysis
-    fail_rate:float = fails / total
+    try:
+        fail_rate:float = fails / total
+    except ZeroDivisionError:
+        fail_rate:float = 0.0
 
     output:str = ''
 
@@ -100,7 +106,8 @@ def cli() -> int:
     command = CrashCommand()
     command.timeout = args.timeout
     command.program = args.program
-    command.arguments = shlex.split(args.arguments)
+    if args.arguments:
+        command.arguments = shlex.split(args.arguments)
     try:
         results:Result = runner(command, args.iterations)
     except Exception as e:

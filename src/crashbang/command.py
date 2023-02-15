@@ -28,7 +28,7 @@ class CrashCommand:
         if not self.program:
             raise ValueError('No command is specified')
         
-        run_command:List[str] = [self.command]
+        run_command:List[str] = [self.program]
         run_command += self.arguments
         
         try:
