@@ -25,8 +25,8 @@ def runner(command:CrashCommand ,iterations:int) -> Result:
             results[count] = True
         else:
             results[count] = False
-        count += 1
         print(f'Run #{count} complete!')
+        count += 1
 
     return results
 
@@ -120,8 +120,8 @@ def cli() -> int:
                 results[count] = True
             else:
                 results[count] = False
-            count += 1
             print(f'Run #{count} complete!')
+            count += 1
 
     except KeyboardInterrupt:
         print('\nExiting early because Ctrl-C was pressed')
