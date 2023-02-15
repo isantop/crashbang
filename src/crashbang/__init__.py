@@ -108,12 +108,29 @@ def cli() -> int:
     command.program = args.program
     if args.arguments:
         command.arguments = shlex.split(args.arguments)
+    
+    print(f'Starting {args.iterations} iterations of program {command.program}...')
+    results:Result = {}
+    count:int = 1
+    
     try:
-        results:Result = runner(command, args.iterations)
+        while count <= args.iterations:
+            print(f'Starting run #{count} of {args.iterations}...')
+            if command.run():
+                results[count] = True
+            else:
+                results[count] = False
+            count += 1
+            print(f'Run #{count} complete!')
+
+    except KeyboardInterrupt:
+        print('\nExiting early because Ctrl-C was pressed')
+
     except Exception as e:
         print('ERROR: The test run could not be completed. Error details:')
         print(e)
         return 1
+
     analysis:Analysis = analyze(results)
     out:str = output(command, analysis)
     print(out)
