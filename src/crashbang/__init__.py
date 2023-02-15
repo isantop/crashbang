@@ -6,6 +6,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
 import argparse
+import shlex
 from typing import Dict, Tuple
 
 from .command import CrashCommand
@@ -92,3 +93,21 @@ def parse_args() -> argparse.Namespace:
     )
 
     return parser.parse_args()
+
+def cli() -> int:
+    """ The main CLI utility"""
+    args = parse_args()
+    command = CrashCommand()
+    command.timeout = args.timeout
+    command.program = args.program
+    command.arguments = shlex.split(args.arguments)
+    try:
+        results:Result = runner(command, args.iterations)
+    except Exception as e:
+        print('ERROR: The test run could not be completed. Error details:')
+        print(e)
+        return 1
+    analysis:Analysis = analyze(results)
+    out:str = output(command, analysis)
+    print(out)
+    return 0
