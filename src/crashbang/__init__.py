@@ -7,6 +7,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 import argparse
 import shlex
+from subprocess import CalledProcessError
 from typing import Dict, Tuple
 
 from .command import CrashCommand
@@ -47,7 +48,7 @@ def analyze(results:Result) -> Analysis:
 def output(command:CrashCommand, analysis:Analysis) -> str:
     success, fails, total = analysis
     try:
-        fail_rate:float = fails / total
+        fail_rate:float = fails / total * 100
     except ZeroDivisionError:
         fail_rate:float = 0.0
 
@@ -57,7 +58,7 @@ def output(command:CrashCommand, analysis:Analysis) -> str:
     output += 'Results:\n'
     output += f'  Total sucesses: {success}\n'
     output += f'  Total crashes: {fails}\n'
-    output += f'  Failure rate: {fail_rate}'
+    output += f'  Failure rate: {fail_rate}%'
 
     return output
 
@@ -100,6 +101,15 @@ def parse_args() -> argparse.Namespace:
 
     return parser.parse_args()
 
+def save_error_output(problem:CalledProcessError , iteration:int) -> None:
+    stdout:str = problem.stdout.decode('UTF-8')
+    stderr:str = problem.stderr.decode('UTF-8')
+    output:str = f'Crashbang test run #{iteration}: FAIL\n'
+    output += 'Command output below:\n\n'
+    output += f'stdout:\n{stdout}\n\nstderr:\n{stderr}\n\n'
+    with open('crashbang_output.txt', mode='a') as output_file:
+        output_file.write(output)
+
 def cli() -> int:
     """ The main CLI utility"""
     args = parse_args()
@@ -116,10 +126,12 @@ def cli() -> int:
     try:
         while count <= args.iterations:
             print(f'Starting run #{count} of {args.iterations}...')
-            if command.run():
+            result = command.run()
+            if result[0]:
                 results[count] = True
             else:
                 results[count] = False
+                save_error_output(result[1], count)
             print(f'Run #{count} complete!')
             count += 1
 

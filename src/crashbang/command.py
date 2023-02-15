@@ -10,7 +10,9 @@ Represents a command to run.
 import shlex
 import subprocess
 
-from typing import List
+from typing import List, Tuple, Any
+
+Result = Tuple[bool, Any]
 
 class CrashCommand:
     """
@@ -23,7 +25,7 @@ class CrashCommand:
         self.timeout:int = 0
     
     
-    def run(self) -> bool:
+    def run(self) -> Result:
         """Run an instance of the specified command"""
         if not self.program:
             raise ValueError('No command is specified')
@@ -33,16 +35,25 @@ class CrashCommand:
         
         try:
             if self.timeout:
-                subprocess.run(run_command, timeout=self.timeout, check=True)
+                result = subprocess.run(
+                    run_command, 
+                    timeout=self.timeout, 
+                    check=True,
+                    capture_output=True
+                )
             else:
-                subprocess.run(run_command, check=True)
-            return True
+                result = subprocess.run(
+                    run_command,
+                    check=True,
+                    capture_output=True
+                )
+            return (True, result)
         
-        except subprocess.CalledProcessError:
-            return False
+        except subprocess.CalledProcessError as e:
+            return (False, e)
         
-        except subprocess.TimeoutExpired:
-            return True
+        except subprocess.TimeoutExpired as e:
+            return (True, e)
 
     @property
     def command(self) -> str:
