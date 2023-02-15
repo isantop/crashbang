@@ -5,12 +5,11 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
 """
 
-import argparse
 import shlex
-from subprocess import CalledProcessError
 from typing import Dict, Tuple
 
 from .command import CrashCommand
+from . import helper
 
 Result = Dict[int, bool]
 Analysis = Tuple[int, int, int]
@@ -62,57 +61,9 @@ def output(command:CrashCommand, analysis:Analysis) -> str:
 
     return output
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        prog='crashbang',
-        description='A tool to aid in testing the stability of programs'
-    )
-
-    parser.add_argument(
-        'program',
-        help='The command line program to run.'
-    )
-
-    parser.add_argument(
-        '-a',
-        '--arguments',
-        help='Arguments to pass to the command line program'
-    )
-
-    parser.add_argument(
-        '-i',
-        '--iterations',
-        type=int,
-        default=10,
-        help='The number of iterations to run (Default: 10)'
-    )
-
-    parser.add_argument(
-        '-t',
-        '--timeout',
-        type=int,
-        default=0,
-        help=(
-            'A timeout (in seconds) to wait for before ending an iteration. If '
-            'an iteration takes longer than this time to complete, it will be '
-            'ended and the iteration will be counted as a success.'
-        )
-    )
-
-    return parser.parse_args()
-
-def save_error_output(problem:CalledProcessError , iteration:int) -> None:
-    stdout:str = problem.stdout.decode('UTF-8')
-    stderr:str = problem.stderr.decode('UTF-8')
-    output:str = f'Crashbang test run #{iteration}: FAIL\n'
-    output += 'Command output below:\n\n'
-    output += f'stdout:\n{stdout}\n\nstderr:\n{stderr}\n\n'
-    with open('crashbang_output.txt', mode='a') as output_file:
-        output_file.write(output)
-
 def cli() -> int:
     """ The main CLI utility"""
-    args = parse_args()
+    args = helper.parse_args()
     command = CrashCommand()
     command.timeout = args.timeout
     command.program = args.program
@@ -131,7 +82,7 @@ def cli() -> int:
                 results[count] = True
             else:
                 results[count] = False
-                save_error_output(result[1], count)
+                helper.save_error_output(result[1], count)
             print(f'Run #{count} complete!')
             count += 1
 
