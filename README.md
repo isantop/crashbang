@@ -75,3 +75,13 @@ in addition to the successes and crashes.
 Crashbang also outputs a file with the console output (stdout and stderr) of any 
 failed iterations. It also outputs the iteration number and the exit status ( or 
 signal, if the termination was caused by a signal). 
+
+
+## Planned Features
+The following features are currently not implemented, but are planned for 
+inclusion:
+
+* Performance/timing information
+* Status and ETA for completion of a test run
+* Expanded output control
+* Hooks for other automated testing tools
