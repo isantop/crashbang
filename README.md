@@ -17,6 +17,24 @@ the program and the iteration is counted as a success. Crashbang can also detect
 crashed caused by a signal (e.g. SIGIOT, Segmentation faults, etc.) and will 
 display the recieved signal in the output file. 
 
+## Installation
+The recommended way to install Crashbang is via `pip` from PyPi:
+
+```
+pip3 install crashbang
+```
+
+You can also install the program from git directly:
+```
+pip3 install git+https://github.com/isantop/crashbang
+```
+
+To install from a local copy of the git repository:
+```
+## From within the cloned git repo:
+pip3 install .
+```
+
 ## Usage
 Basic usage is to prepend `crashbang` to the program you want to run. This will 
 run through 10 iterations of the program, waiting for the program to naturally 
