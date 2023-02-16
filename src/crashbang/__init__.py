@@ -63,6 +63,7 @@ def output(command:CrashCommand, analysis:Analysis) -> str:
 
 def cli() -> int:
     """ The main CLI utility"""
+    exit_status: int = 0
     args = helper.parse_args()
     command = CrashCommand()
     command.timeout = args.timeout
@@ -88,6 +89,7 @@ def cli() -> int:
 
     except KeyboardInterrupt:
         print('\nExiting early because Ctrl-C was pressed')
+        exit_status = 130
 
     except Exception as e:
         print('ERROR: The test run could not be completed. Error details:')
@@ -97,4 +99,4 @@ def cli() -> int:
     analysis:Analysis = analyze(results)
     out:str = output(command, analysis)
     print(out)
-    return 0
+    return exit_status
