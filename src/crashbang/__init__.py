@@ -14,6 +14,8 @@ from . import helper
 Result = Dict[int, bool]
 Analysis = Tuple[int, int, int]
 
+__version__ = "0.0.2"
+
 def runner(command:CrashCommand ,iterations:int) -> Result:
     print(f'Starting {iterations} iterations of program {command.program}...')
     results:Result = {}
