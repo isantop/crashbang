@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "Crashbang"
-version = "0.0.2"
+version = "0.1.0"
 authors = [
     { name="Ian Santopietro", email="isantop@gmail.com" }
 ]
@@ -29,7 +29,7 @@ classifiers = [
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.0.2"
+version = "0.1.0"
 version_files = [
     "pyproject.toml:^version",
     "setup.cfg:^version",
