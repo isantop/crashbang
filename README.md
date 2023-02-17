@@ -1,5 +1,5 @@
 # crashbang
-A tool to aid in testing the stability of programs
+A tool to aid in testing the stability of programs.
 
 Crashbang is a tool that allows you to easily run a program through several 
 iterations, speeding up the process of testing a program's stability. It also 
